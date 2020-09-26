@@ -17,12 +17,12 @@ public class IndexController {
 
     @RequestMapping("/login")
     public String login(){
-        return "/login";
+        return "/logindd";
     }
 
     @RequestMapping("/register")
     public String register(){
-        return "/register";
+        return "/registerdd";
     }
 
     @PostMapping("/user/registerUser")
@@ -51,9 +51,9 @@ public class IndexController {
                           @RequestParam("pwd") String pwd){
         int num = sysUserService.queryUser(email,pwd);
         if(num == 0){
-            return "/login";
+            return "/logindd";
         }else{
-            return "/product";
+            return "/productdd";
         }
     }
 }
