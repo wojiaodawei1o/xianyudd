@@ -1,12 +1,18 @@
 package com.example.controller;
 
 import com.example.entity.SysUser;
+import com.example.entity.book;
+import com.example.service.IBookService;
+import com.example.service.IShopCarService;
 import com.example.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.awt.print.Book;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -14,6 +20,12 @@ public class IndexController {
 
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private IBookService bookService;
+
+    @Autowired
+    private IShopCarService shopCarService;
 
     @RequestMapping("/login")
     public String login(){
@@ -47,13 +59,57 @@ public class IndexController {
     }
 
     @PostMapping("/loginIn")
-    public String loginIn(@RequestParam("email") String email,
+    @ResponseBody
+    public ModelAndView loginIn(@RequestParam("email") String email,
                           @RequestParam("pwd") String pwd){
+        ModelAndView mov = null;
         int num = sysUserService.queryUser(email,pwd);
         if(num == 0){
-            return "/logindd";
+            mov = new ModelAndView("/logindd");
         }else{
-            return "/productdd";
+            //获取图书列表
+            List<book> list = bookService.queryBookList();
+            mov = new ModelAndView("/productdd");
+            mov.addObject("bookList",list);
+            mov.addObject("userName",email);
         }
+        return mov;
     }
+
+    @RequestMapping("/shopping")
+    @ResponseBody
+    public ModelAndView shopping(@RequestParam("userName") String userName){
+        ModelAndView mov = null;
+        List<book> list = bookService.queryBookListByUserName(userName);
+        Double sum1 = 0.0;
+        int sum2 = 0;
+        for(book b:list){
+            sum1+=b.getPrice();
+            sum2+=Integer.parseInt(b.getIntegral());
+        }
+        mov = new ModelAndView("/shoppingdd");
+        mov.addObject("bookList",list);
+        mov.addObject("sumPrice",sum1);
+        mov.addObject("sumScore",sum2);
+        mov.addObject("userName",userName);
+        return mov;
+    }
+
+    @PostMapping("/user/putInCar")
+    public void putInCar(@RequestParam("bookId") String bookId,
+                         @RequestParam("userName") String userName){
+        shopCarService.save(bookId,userName);
+    }
+
+    @PostMapping("/user/deleteBook")
+    public void deleteBook(@RequestParam("bookId") String bookId,
+                         @RequestParam("userName") String userName){
+        shopCarService.delete(bookId,userName);
+    }
+
+    @PostMapping("/user/deleteAll")
+    public void deleteAll(@RequestParam("userName") String userName){
+        shopCarService.deleteAll(userName);
+    }
+
 }

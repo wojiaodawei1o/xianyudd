@@ -3,12 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>当当网购物车页面</title>
-    <link href="../../../src/main/resources/static/css/global.css" rel="stylesheet" type="text/css" />
-    <link href="../../../src/main/resources/static/css/layout.css" rel="stylesheet" type="text/css" />
-	<link href="../../../src/main/resources/static/css/template.css" rel="stylesheet" type="text/css" />
+    <link href="css/global.css" rel="stylesheet" type="text/css" />
+    <link href="css/layout.css" rel="stylesheet" type="text/css" />
+	<link href="css/template.css" rel="stylesheet" type="text/css" />
 	
-    <script type="text/javascript" src="jquery.min.js"></script>
-	<script type="text/javascript" src="head.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(e) {
 			$("#menu").mouseenter(function(){
@@ -22,7 +21,6 @@
 	
     <script type="text/javascript">
 	$(document).ready(function(e) {
-		totalPrice();
     $("#myTableProduct").find(".shopping_product_list_6").children("a").click(function(){//找到tr下的td下的a标签
         if(confirm("您确定要删除商品么？")){
             $(this).parent().parent().remove();
@@ -41,21 +39,57 @@
     });
  });
     function totalPrice(){
-        var percents= 0,prePrices= 0,prices=0;//积分，原价，现价
-        $("#myTableProduct").find("tr").each(function(i,ele){//遍历所以tr里面的值  
-            var num=$(ele).find(".shopping_product_list_5").find("input").val();//数量
-            percents+=parseInt($(ele).find(".shopping_product_list_2").text())*num;//总积分=积分+积分*数量
-            //解决下js中浮点数的bug问题，因此建议浮点数的运算不要放在前台，这里是指粗略的解决了一下
-            var price=parseInt($(ele).find(".shopping_product_list_4").find("label").text().replace(".",""))*num;
-            prices+=price;//总价格=现价*数量
-            var prePrice=parseInt($(ele).find(".shopping_product_list_3").find("label").text().replace(".",""))*num;
-            prePrices+=prePrice;//原价=原价*数量
-        });
-        $("#product_integral").text(percents);//积分栏显示所计算得出的积分
-        $("#product_total").text(prices/100); //总价栏=现价*0.01(因为前面计算已经省略了小数点  所有要/100显示出小数点)
-        $("#product_save").text((prePrices-prices)/100);//节省金额栏=（原价-现价）*0.01
-        return prices/100;//可有可无
+        var scores= 0,prices=0;//积分，原价，现价
+        $("#myTableProduct").find("tr").each(function(i,ele) {//遍历所以tr里面的值
+			var score=parseInt($(ele).find(".shopping_product_list_2").find("label").text().replace(".",""))*1;
+			var price=parseInt($(ele).find(".shopping_product_list_3").find("label").text().replace(".",""))*1;
+			var bookid = $(ele).find(".shopping_product_list_0").find("label").text();
+			prices += price;
+			scores += score;
+			$.ajax({
+				type : "POST",
+				url:"/user/deleteBook?bookId="+bookid+"&userName=${userName!}",
+				dataType : "json",
+				success : function(data) {
+				}
+			});
+
+		});
+		$("#spje").text(prices);
+		$("#spjf").text(scores);
+        //     var num=$(ele).find(".shopping_product_list_5").find("input").val();//数量
+        //     percents+=parseInt($(ele).find(".shopping_product_list_2").text())*num;//总积分=积分+积分*数量
+        //     //解决下js中浮点数的bug问题，因此建议浮点数的运算不要放在前台，这里是指粗略的解决了一下
+        //     var price=parseInt($(ele).find(".shopping_product_list_4").find("label").text().replace(".",""))*num;
+        //     prices+=price;//总价格=现价*数量
+        //     var prePrice=parseInt($(ele).find(".shopping_product_list_3").find("label").text().replace(".",""))*num;
+        //     prePrices+=prePrice;//原价=原价*数量
+        // });
+        // $("#product_integral").text(percents);//积分栏显示所计算得出的积分
+        // $("#product_total").text(prices/100); //总价栏=现价*0.01(因为前面计算已经省略了小数点  所有要/100显示出小数点)
+        // $("#product_save").text((prePrices-prices)/100);//节省金额栏=（原价-现价）*0.01
+        // return prices/100;//可有可无
     }
+
+    function balance(){
+    	alert("购买成功！");
+	}
+
+	function clearCar(){
+		$.ajax({
+			type : "POST",
+			url:"/user/deleteAll?userName=${userName!}",
+			dataType : "json",
+			success : function(data) {
+			}
+		});
+		//清除所有
+		$("#myTableProduct").find("tr").each(function(i,ele) {//遍历所以tr里面的值
+			$(this).parent().parent().remove();
+			totalPrice();//修改价格
+		});
+	}
+
     </script>
 </head>
 
@@ -68,7 +102,7 @@
 			<ul>
 				<li><a href="#" target="_self">帮助</a></li>
 				<li>|</li>
-				<li id="menu"><a href="#" target="_self">我的当当</a> <img src="../../../src/main/resources/static/images/dd_arrow_down.gif" alt="arrow" />
+				<li id="menu"><a href="#" target="_self">我的当当</a> <img src="images/dd_arrow_down.gif" alt="arrow" />
 					<div id="dd_menu_top_down">
 						<a href="#" target="_self">我的订单</a><br />
 						<a href="#" target="_self">账户余额</a><br />
@@ -84,13 +118,13 @@
 				<li><a href="#" target="_self">个性化推荐</a></li>
 				<li>|</li>
 				<li><a href="shopping.html" target="_parent">购物车</a></li>
-				<li><img src="../../../src/main/resources/static/images/dd_header_shop.gif" alt="shopping"/></li>
+				<li><img src="images/dd_header_shop.gif" alt="shopping"/></li>
 			</ul>
 		</div>
 	</div>
 	<!--导航开始-->
 	<div class="header_middle">
-		<div class="logo"><img src="../../../src/main/resources/static/images/dd_logo.gif" alt="logo"/></div>
+		<div class="logo"><img src="images/dd_logo.gif" alt="logo"/></div>
 		<div class="menu_left">
 			<dl>
 				<dd class="menu_left_first"></dd>
@@ -126,7 +160,7 @@
 			<ul>
 				<li class="menu_right_1"><a href="#" target="_self">商店街</a></li>
 				<li class="menu_right_2"><a href="#" target="_self">促销</a></li>
-				<li class="menu_right_3"><a href="#" target="_self">当当<img src="../../../src/main/resources/static/images/dd_header_top.png" alt="榜" /></a>
+				<li class="menu_right_3"><a href="#" target="_self">当当<img src="images/dd_header_top.png" alt="榜" /></a>
 				</li>
 				<li class="menu_right_2"><a href="#" target="_self">社区</a></li>
 				<li class="menu_right_3"><a href="#" target="_self">在线读书</a></li>
@@ -157,10 +191,10 @@
 		<div class="header_serach_mid">
 			<ul id="header_serach_mid_menu">
 				<li><input id="header_serach" type="text" class="header_input_search" /></li>
-				<li><input type="image" class="header_secrch_btn" src="../../../src/main/resources/static/images/dd_header_search_btn.jpg" /></li>
-				<li><img src="../../../src/main/resources/static/images/dd_arrow_right.gif" alt="arrow"/> <a href="#" target="_self">高级搜索</a></li>
+				<li><input type="image" class="header_secrch_btn" src="images/dd_header_search_btn.jpg" /></li>
+				<li><img src="images/dd_arrow_right.gif" alt="arrow"/> <a href="#" target="_self">高级搜索</a></li>
 				<li>|</li>
-				<li><img src="../../../src/main/resources/static/images/dd_header_search_top.jpg" alt="搜索风云榜"/></li>
+				<li><img src="images/dd_header_search_top.jpg" alt="搜索风云榜"/></li>
 				<li><a href="#" target="_self">雅思</a></li>
 				<li>|</li>
 				<li><a href="#" target="_self">建造师</a></li>
@@ -181,11 +215,11 @@
 </div>
 <!--中间部分开始-->
 <div id="main">
-    <div>&nbsp;&nbsp;<img src="../../../src/main/resources/static/images/shopping_myshopping.gif" alt="shopping"/> <a href="#">全场免运费活动中</a></div>
+    <div>&nbsp;&nbsp;<img src="images/shopping_myshopping.gif" alt="shopping"/> <a href="#">全场免运费活动中</a></div>
     <!--为您推荐商品开始-->
     <div class="shopping_commend">
         <div class="shopping_commend_left">根据您挑选的商品，当当为您推荐</div>
-        <div class="shopping_commend_right"><img src="../../../src/main/resources/static/images/shopping_arrow_up.gif" alt="shopping" id="shopping_commend_arrow"/></div>
+        <div class="shopping_commend_right"><img src="images/shopping_arrow_up.gif" alt="shopping" id="shopping_commend_arrow"/></div>
     </div>
     <div id="shopping_commend_sort">
         <div class="shopping_commend_sort_left">
@@ -249,69 +283,31 @@
                 <td class="shopping_list_title_1">商品名</td>
                 <td class="shopping_list_title_2">单品积分</td>
                 <td class="shopping_list_title_3">市场价</td>
-                <td class="shopping_list_title_4">当当价</td>
+                <td class="shopping_list_title_4">折扣</td>
                 <td class="shopping_list_title_5">数量</td>
                 <td class="shopping_list_title_6">删除</td>
             </tr>
         </table>
         <table width="100%" border="0" cellspacing="0" cellpadding="0" id="myTableProduct">
-            <tr class="shopping_product_list" id="shoppingProduct_01">
-                <td class="shopping_product_list_1"><a href="#" class="blue">私募（首部披露资本博弈秘密的金融...</a></td>
-                <td class="shopping_product_list_2"><label>189</label></td>
-                <td class="shopping_product_list_3">￥<label>32.00</label></td>
-                <td class="shopping_product_list_4">￥<label>18.90 </label>(59折)</td>
-                <td class="shopping_product_list_5"><input type="text" value="1" id="number_input"/></td>
-                <td class="shopping_product_list_6"><a href="#" class="blue" id="del">删除</a></td>
-            </tr>
-            <tr class="shopping_product_list" id="shoppingProduct_02">
-                <td class="shopping_product_list_1"><a href="#" class="blue"> 小团圆（张爱玲最神秘小说遗稿）</a></td>
-                <td class="shopping_product_list_2"><label>173</label></td>
-                <td class="shopping_product_list_3">￥<label>28.00</label></td>
-                <td class="shopping_product_list_4">￥<label>17.30</label>(62折)</td>
-                <td class="shopping_product_list_5"><input type="text" value="1" id="number_input"/></td>
-                <td class="shopping_product_list_6"><a href="javascript:void(0)" class="blue" id="del">删除</a></td>
-            </tr>
-            <tr class="shopping_product_list" id="shoppingProduct_03">
-                <td class="shopping_product_list_1"><a href="#" class="blue">不抱怨的世界(畅销全球80国的世界...</a></td>
-                <td class="shopping_product_list_2"><label>154</label></td>
-                <td class="shopping_product_list_3">￥<label>24.80</label></td>
-                <td class="shopping_product_list_4">￥<label>15.40</label> (62折)</td>
-                <td class="shopping_product_list_5"><input type="text" value="2" id="number_input"/></td>
-                <td class="shopping_product_list_6"><a href="javascript:void(0)" class="blue" id="del">删除</a></td>
-            </tr>
-            <tr class="shopping_product_list" id="shoppingProduct_04">
-                <td class="shopping_product_list_1"><a href="#" class="blue">福玛特双桶洗衣机XPB20-07S</a></td>
-                <td class="shopping_product_list_2"><label>358</label></td>
-                <td class="shopping_product_list_3">￥<label>458.00</label></td>
-                <td class="shopping_product_list_4">￥<label>358.00</label> (78折)</td>
-                <td class="shopping_product_list_5"><input type="text" value="1" id="number_input"/></td>
-                <td class="shopping_product_list_6"><a href="javascript:void(0)" class="blue" id="del">删除</a></td>
-            </tr>
-            <tr class="shopping_product_list" id="shoppingProduct_05">
-                <td class="shopping_product_list_1"><a href="#" class="blue">PHP和MySQL Web开发 （原书第4版）</a></td>
-                <td class="shopping_product_list_2"><label>712</label></td>
-                <td class="shopping_product_list_3">￥<label>95.00</label></td>
-                <td class="shopping_product_list_4">￥<label>71.20</label> (75折)</td>
-                <td class="shopping_product_list_5"><input type="text" value="1" id="number_input"/></td>
-                <td class="shopping_product_list_6"><a href="javascript:void(0)" class="blue" id="del">删除</a></td>
-            </tr>
-            <tr class="shopping_product_list" id="shoppingProduct_06">
-                <td class="shopping_product_list_1"><a href="#" class="blue">法布尔昆虫记</a>（再买￥68.30即可参加“满199元减10元现金”活动）</td>
-                <td class="shopping_product_list_2"><label>10</label></td>
-                <td class="shopping_product_list_3">￥<label>198.00</label></td>
-                <td class="shopping_product_list_4">￥<label>130.70</label> (66折)</td>
-                <td class="shopping_product_list_5"><input type="text" value="1" id="number_input"/></td>
-                <td class="shopping_product_list_6"><a href="javascript:void(0)" class="blue" id="del">删除</a></td>
-            </tr>
+            <#list bookList as book>
+                <tr class="shopping_product_list" id="shoppingProduct_01">
+                    <td class="shopping_product_list_0" type="hidden"><label>${book.id}</label></td>
+                    <td class="shopping_product_list_1"><a href="#" class="blue">${book.name}</a></td>
+                    <td class="shopping_product_list_2"><label>${book.integral}</label></td>
+                    <td class="shopping_product_list_3">￥<label>${book.price}</label></td>
+                    <td class="shopping_product_list_4">${book.discount}折</label></td>
+                    <td class="shopping_product_list_5"><input type="text" value="1" id="number_input"/></td>
+                    <td class="shopping_product_list_6"><a href="#" class="blue" id="del">删除</a></td>
+                </tr>
+            </#list>
         </table>
         <div class="shopping_list_end">
-            <div><a id="removeAllProduct" href="javascript:void(0);">清空购物车</a></div>
+            <div><a id="removeAllProduct" href="javascript:void(0);" onclick="clearCar()">清空购物车</a></div>
             <ul>
-                <li class="shopping_list_end_1"><input name="" type="image" src="../../../src/main/resources/static/images/shopping_balance.gif"/></li>
-                <li class="shopping_list_end_2">￥<label id="product_total"></label></li>
-                <li class="shopping_list_end_3">商品金额总计：<span id="total"></span></li>
-                <li  class="shopping_list_end_4">您共节省金额：￥<label class="shopping_list_end_yellow" id="product_save"></label><br/>
-                    可获商品积分：<label class="shopping_list_end_yellow" id="product_integral"></label>
+                <li class="shopping_list_end_1"><input name="" type="image" src="images/shopping_balance.gif" onclick="balance()"/></li>
+                <li class="shopping_list_end_2">￥</li>
+				<li class="shopping_list_end_3">商品金额总计：<span id="spje">${sumPrice!}</span></li>
+                <li  class="shopping_list_end_4"></label> 可获商品积分：<span id="spjf">${sumScore!}</span></label>
                 </li>
             </ul>
         </div>
@@ -320,6 +316,6 @@
 
 <!--网站版权部分开始-->
 <div id="footer">
-<div class="footer_end">Copyright (C) 当当网 2004-2009, All Rights Reserved  <img src="../../../src/main/resources/static/images/validate.gif" alt="版权" style="vertical-align:middle;" /> 京ICP证041189号 音像制品经营许可证 京音网8号</div></div>
+<div class="footer_end">Copyright (C) 当当网 2004-2009, All Rights Reserved  <img src="images/validate.gif" alt="版权" style="vertical-align:middle;" /> 京ICP证041189号 音像制品经营许可证 京音网8号</div></div>
 </body>
 </html>
