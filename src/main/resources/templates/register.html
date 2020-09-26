@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>当当网注册页面</title>
+    <link href="css/global.css" rel="stylesheet" type="text/css" />
+    <link href="css/layout.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/register.js"></script>
+    <style type="text/css">
+	.register_prompt_error{
+    font-size:12px;
+    color:#C8180B;
+    border:solid 1px #999;
+    background-color:#fef4d0;
+    padding:0px 5px 0px 5px;
+    height:18px;
+}
+.ok_prompt{    font-size:12px;
+    color:#C8180B;
+    border:solid 1px #999;
+    background-color:#fef4d0;
+    padding:0px 5px 0px 5px;
+    height:18px;};
+	</style>
+    <script type="text/javascript">
+		function checkEmail()
+        {
+            var emailStr=$("#email").val();
+			 var reg=/^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/;
+			if(emailStr=="")
+			{
+				$("#email_prompt").removeClass().addClass("register_prompt_error").html("邮箱地址不能为空");
+				return false;
+			}
+			else if(reg.test(emailStr)==true)
+			{
+				$("#email_prompt").removeClass().addClass("ok_prompt").html("邮箱地址输入正确");
+				return  true;
+			}else{
+				$("#email_prompt").removeClass().addClass("register_prompt_error").html("邮箱地址不能为空");;
+				return false;
+			}
+			return true;
+		}
+
+        function checkNickName()
+		{
+			var nickName=$("#nickName").val();
+			var reg=/^[a-zA-Z0-9]{4,20}$/;
+			if(reg.test(nickName))
+			{
+				$("#nickName").next().text();
+				return true;
+			}
+			else
+			{
+		     var $showTag=$("#nickName").next();//当前标签的下一个
+			 $showTag.text("昵称格式不正确,请重新输入");
+			 $showTag.css("color","red");
+			 $("#nickName").focus();
+			 $("#nickName").select();
+			 return false;
+			}
+		   }
+
+        $("#myform").submit(function(e) {
+            return checkEmail() & checkNickName() ;
+        });
+
+	function save() {
+	    var flag = true;
+        $("#myform").find("input").each(function(i,ele){
+            if(!validate($(ele))){
+                flag=false;
+            }
+        });
+	    if(flag && checkEmail() && checkNickName()){
+            $.ajax({
+                type : "POST",
+                url:"/user/registerUser",
+                data : $("#myform").serialize(),
+                dataType : "json",
+                success : function(data) {
+                    alert(data.msg);
+                }
+            });
+        }
+
+
+    }
+
+    </script>
+</head>
+
+<body>
+<div id="header">
+    <div id="register_header">
+        <div class="register_header_left"><img src="images/logo.gif" alt="logo"/></div>
+        <div class="register_header_right"><a href="index.html" class="blue">首页</a> | <a href="product.html" class="blue">商品展示页</a>  | <a href="shopping.html" class="blue">购物车</a> |  <a href="login" class="blue">登录</a></div>
+    </div>
+</div>
+<div id="main">
+    <div class="register_content">
+        <div class="register_top_bg"></div>
+        <div class="register_mid_bg">
+            <ul>
+                <li class="register_mid_left">填写注册信息</li>
+                <li class="register_mid_mid">2. 邮箱验证</li>
+                <li class="register_mid_right">3. 完成注册</li>
+            </ul>
+        </div>
+        <div class="register_top_bg_mid">
+            <div class="register_top_bg_two_left"></div>
+            <div class="register_top_bg_two_right"></div>
+            <div class="register_title_bg"><img src="images/register_pic_02.gif" alt="欢迎注册"/><br/>您所提供的资料不会做其他用途，敬请安心填写。</div>
+        </div>
+        <div class="register_dotted_bg"></div>
+        <div class="register_message">
+            <form action="" method="post" id="myform">
+                <dl class="register_row">
+                    <dt>Email地址：</dt>
+                    <dd><input id="email" name="email" type="text" class="register_input" value=""/><span></span></dd>
+                    <dd><div id="email_prompt"></div></dd>
+                </dl>
+                <dl class="register_row">
+                    <dt>设置昵称：</dt>
+                    <dd><input id="nickName" name="nickName" type="text" class="register_input"/><span></span></dd>
+                    <dd><div id="nickName_prompt"></div></dd>
+                </dl>
+                <dl class="register_row">
+                    <dt>设定密码：</dt>
+                    <dd><input id="pwd" type="password"  class="register_input"/></dd>
+                    <dd><div id="pwd_prompt"></div></dd>
+                </dl>
+                <dl class="register_row">
+                    <dt>再输入一次密码：</dt>
+                    <dd><input id="repwd" type="password" name="password" class="register_input"/></dd>
+                    <dd><div id="repwd_prompt"></div></dd>
+                </dl>
+                <dl class="register_row">
+                    <dt>性别：</dt>
+                    <dd><input name="sex" id="man" type="radio" value="男" checked="checked"/> <label for="man">男</label></dd>
+                    <dd> <input name="sex" id="woman" type="radio" value="女"/> <label for="woman">女</label></dd>
+                </dl>
+                <dl class="register_row">
+                    <dt>所在地区：</dt>
+                    <dd>
+                        <select id="province" style="width:120px;" name="city">
+                            <option>请选择省/城市</option>
+                        </select>
+                    </dd>
+                    <dd>
+                        <select id="city"  style="width:130px;" name="county">
+                            <option>请选择城市/地区</option>
+                        </select>
+                    </dd>
+                </dl>
+                <div class="registerBtn"><button id="aaa" type="button" onclick="save()">提交注册</button></div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<!--网站版权部分开始-->
+<div id="footer">
+    <div class="footer_end">Copyright (C) 当当网 2004-2009, All Rights Reserved  <img src="images/validate.gif" alt="版权" style="vertical-align:middle;" /> 京ICP证041189号 音像制品经营许可证 京音网8号</div>
+</div>
+</body>
+</html>
