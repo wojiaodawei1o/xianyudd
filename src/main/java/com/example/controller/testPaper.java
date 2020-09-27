@@ -1,9 +1,9 @@
 package com.example.controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -48,6 +48,62 @@ public class testPaper {
         return "";
     }
 
+    /**
+     * 判断是否重复
+     * @return
+     */
+//    public boolean isRepeat(String subject,String grade){
+//        boolean flag = false;
+//        String teacherName = userNameAndPassWord.substring(0,3);//获得老师姓名
+//        //小学
+//        switch (grade){
+//            case "xiaoxue":
+//
+//                break;
+//        }
+//
+//
+//    }
+
+    public static void getDirectory(Path path) {
+        try (DirectoryStream<Path> children = Files.newDirectoryStream(path)) {
+            if (children != null) {
+                for (Path child : children) {
+                    if (Files.isDirectory(child)) {
+                        // System.out.println("Dir==>"+child.toAbsolutePath());
+                        getDirectory(child);
+                    } else {
+                        if (child.toString().matches(".+\\.txt"))
+                            System.out.println("file.txt==>" + child.toAbsolutePath());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获得文件内容
+     * @param file
+     * @return
+     */
+    public static String txt2String(File file){
+        StringBuilder result = new StringBuilder();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+            String s = null;
+            while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+                result.append(System.lineSeparator()+s);
+            }
+            br.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result.toString();
+    }
+
     public static String CreateXiaoxue(int num){
         Random r = new Random();
         String str = "";
@@ -57,7 +113,7 @@ public class testPaper {
             String no = i+1+". ";
             mathStr += no;
             //随机操作数 2~5
-            int ran1 = r.nextInt(4)+2;
+            int ran1 = r.nextInt(5)+1;
             //防止出现多个括号
             boolean flag = true;
             for(int j = 0 ; j < ran1 ; j++){
@@ -97,8 +153,13 @@ public class testPaper {
             if(!mathStr.contains("(") && mathStr.contains(")")){
                 mathStr = mathStr.replace(")","");
             }
-            mathStr += "\r\n";
-            str += mathStr;
+            //判断是否重复
+            if(str.contains(mathStr)){
+                i--;
+            }else{
+                mathStr += "\r\n";
+                str += mathStr;
+            }
         }
         return str;
     }
@@ -112,7 +173,7 @@ public class testPaper {
             String no = i+1+". ";
             mathStr += no;
             //随机操作数 2~5
-            int ran1 = r.nextInt(4)+2;
+            int ran1 = r.nextInt(5)+1;
             //防止出现多个括号
             boolean flag = true;
             //防止不出现平方或者更号
@@ -176,8 +237,13 @@ public class testPaper {
             if(!mathStr.contains("(") && mathStr.contains(")")){
                 mathStr = mathStr.replace(")","");
             }
-            mathStr += "\r\n";
-            str += mathStr;
+            //判断是否重复
+            if(str.contains(mathStr)){
+                i--;
+            }else{
+                mathStr += "\r\n";
+                str += mathStr;
+            }
         }
         return str;
     }
@@ -191,7 +257,7 @@ public class testPaper {
             String no = i+1+". ";
             mathStr += no;
             //随机操作数 2~5
-            int ran1 = r.nextInt(4)+2;
+            int ran1 = r.nextInt(5)+1;
             //防止出现多个括号
             boolean flag = true;
             //防止不出现平方或者更号
@@ -258,8 +324,13 @@ public class testPaper {
             if(!mathStr.contains("(") && mathStr.contains(")")){
                 mathStr = mathStr.replace(")","");
             }
-            mathStr += "\r\n";
-            str += mathStr;
+            //判断是否重复
+            if(str.contains(mathStr)){
+                i--;
+            }else{
+                mathStr += "\r\n";
+                str += mathStr;
+            }
         }
         return str;
     }
@@ -321,19 +392,19 @@ public class testPaper {
             String date = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(new Date());
             //小学
             if(userNameAndPassWord.contains("张三")){
-                String directory = "D:/小学试卷/"+userNameAndPassWord.substring(0,3);
+                String directory = "../小学试卷/"+userNameAndPassWord.substring(0,3);
                 String filename = date+".txt";
                 CreateFile(directory,filename,size);
             }
             //初中
             if(userNameAndPassWord.contains("李四")){
-                String directory = "D:/初中试卷/"+userNameAndPassWord.substring(0,3);
+                String directory = "../初中试卷/"+userNameAndPassWord.substring(0,3);
                 String filename = date+".txt";
                 CreateFile(directory,filename,size);
             }
             //高中
             if(userNameAndPassWord.contains("王五")){
-                String directory = "D:/高中试卷/"+userNameAndPassWord.substring(0,3);
+                String directory = "../高中试卷/"+userNameAndPassWord.substring(0,3);
                 String filename = date+".txt";
                 CreateFile(directory,filename,size);
             }

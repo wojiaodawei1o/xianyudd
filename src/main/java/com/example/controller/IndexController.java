@@ -37,6 +37,17 @@ public class IndexController {
         return "/registerdd";
     }
 
+    @RequestMapping("/product")
+    @ResponseBody
+    public ModelAndView product(@RequestParam("petName") String petName){
+        ModelAndView mov = null;
+        List<book> list = bookService.queryBookList();
+        mov = new ModelAndView("/productdd");
+        mov.addObject("bookList",list);
+        mov.addObject("petName",petName);
+        return mov;
+    }
+
     @PostMapping("/user/registerUser")
     @ResponseBody
     public Map<String, Object> registerUser(@RequestParam("email") String email,
@@ -61,17 +72,18 @@ public class IndexController {
     @PostMapping("/loginIn")
     @ResponseBody
     public ModelAndView loginIn(@RequestParam("email") String email,
-                          @RequestParam("pwd") String pwd){
+                                @RequestParam("pwd") String pwd){
+        //获取图书列表
+        List<book> list = bookService.queryBookList();
         ModelAndView mov = null;
         SysUser user = sysUserService.queryUser(email,pwd);
         if(null == user){
             mov = new ModelAndView("/logindd");
         }else{
-            //获取图书列表
-            List<book> list = bookService.queryBookList();
             mov = new ModelAndView("/productdd");
             mov.addObject("bookList",list);
             mov.addObject("userName",email);
+            mov.addObject("pwd",pwd);
             mov.addObject("petName",user.getPetName());
         }
         return mov;
