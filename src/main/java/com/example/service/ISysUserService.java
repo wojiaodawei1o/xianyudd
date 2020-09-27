@@ -11,6 +11,6 @@ public interface ISysUserService {
      */
     void insertSysUser(SysUser sysUser);
 
-    int queryUser(String str1,String str2);
+    SysUser queryUser(String str1,String str2);
 
 }

@@ -18,8 +18,8 @@
 		});
 	});
 
-	function buyBook(userName){
-        window.location.href="shopping?userName="+userName;
+	function buyBook(userName,petName){
+        window.location.href="shopping?userName="+userName + "&petName=" + petName;
     }
 
     function putInCar(bookId,userName){
@@ -41,7 +41,7 @@
 <div id="header">
     <!--顶部开始-->
 	<div class="header_top">
-		<div class="header_top_left">您好！欢迎光临当当网 [<a href="login" target="_parent">登录</a> | <a href="register" target="_parent">免费注册</a>]</div>
+		<div class="header_top_left">${petName!} 您好！欢迎光临当当网</div>
 		<div class="header_top_right">
 			<ul>
 				<li><a href="#" target="_self">帮助</a></li>
@@ -226,7 +226,7 @@
                     <li>
                         <dl class="product_content_dd">
                             <dd><img src="images/product_buy_02.gif" alt="shopping" onclick="putInCar('${book.id}','${userName!}')"/></dd>
-                            <dd><img src="images/product_buy_01.gif" alt="shopping" onclick="buyBook('${userName!}')"/></dd>
+                            <dd><img src="images/product_buy_01.gif" alt="shopping" onclick="buyBook('${userName!}','${petName!}')"/></dd>
                             <dd>折扣：<span>${book.discount}折</span></dd>
                             <dd class="footer_dull_red"><span>￥${book.price}</span></dd>
                         </dl>

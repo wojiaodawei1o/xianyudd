@@ -63,8 +63,8 @@ public class IndexController {
     public ModelAndView loginIn(@RequestParam("email") String email,
                           @RequestParam("pwd") String pwd){
         ModelAndView mov = null;
-        int num = sysUserService.queryUser(email,pwd);
-        if(num == 0){
+        SysUser user = sysUserService.queryUser(email,pwd);
+        if(null == user){
             mov = new ModelAndView("/logindd");
         }else{
             //获取图书列表
@@ -72,13 +72,15 @@ public class IndexController {
             mov = new ModelAndView("/productdd");
             mov.addObject("bookList",list);
             mov.addObject("userName",email);
+            mov.addObject("petName",user.getPetName());
         }
         return mov;
     }
 
     @RequestMapping("/shopping")
     @ResponseBody
-    public ModelAndView shopping(@RequestParam("userName") String userName){
+    public ModelAndView shopping(@RequestParam("userName") String userName,
+                                 @RequestParam("petName") String petName){
         ModelAndView mov = null;
         List<book> list = bookService.queryBookListByUserName(userName);
         Double sum1 = 0.0;
@@ -92,6 +94,7 @@ public class IndexController {
         mov.addObject("sumPrice",sum1);
         mov.addObject("sumScore",sum2);
         mov.addObject("userName",userName);
+        mov.addObject("petName",petName);
         return mov;
     }
 
