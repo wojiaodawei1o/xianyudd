@@ -31,9 +31,9 @@ public class SysUserServiceImpl implements ISysUserService {
         jdbcTemplate.execute(sql);
     }
 
-    public int queryUser(String str1,String str2){
+    public SysUser queryUser(String str1,String str2){
         String sql = "select * from sys_user where (email = '"+str1+"' or petName = '"+str1+"') and password = '"+str2+"' ";
         List<SysUser> list = jdbcTemplate.query(sql, new Object[]{}, new BeanPropertyRowMapper(SysUser.class));
-        return list.size();
+        return list.get(0);
     }
 }

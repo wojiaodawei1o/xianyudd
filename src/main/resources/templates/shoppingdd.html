@@ -73,6 +73,7 @@
 
     function balance(){
     	alert("购买成功！");
+    	window.location.href='/'
 	}
 
 	function clearCar(){
@@ -97,7 +98,7 @@
 <div id="header">
     <!--顶部开始-->
 	<div class="header_top">
-		<div class="header_top_left">您好！欢迎光临当当网 [<a href="login.html" target="_parent">登录</a> | <a href="register.html" target="_parent">免费注册</a>]</div>
+		<div class="header_top_left">${petName!} 您好！欢迎光临当当网</div>
 		<div class="header_top_right">
 			<ul>
 				<li><a href="#" target="_self">帮助</a></li>
